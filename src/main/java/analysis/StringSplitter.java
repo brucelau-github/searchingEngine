@@ -2,7 +2,7 @@ package analysis;
 
 public class StringSplitter implements analyzable {
 	private final String wordSplitter = "\\s+";
-	private InvertedItem invertedItems = new InvertedItem();
+	private InvertedItem invertedItems = new InvertedItem(1);
 	@Override
 	public void analyse(String doc) {
 		String[] words = doc.split(wordSplitter);

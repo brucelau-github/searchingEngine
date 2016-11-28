@@ -48,4 +48,10 @@ public class RedisDAO implements DAO {
 	public String lpop(String list){
 		return syncCommands.lpop(list);
 	}
+	public boolean exists(String key){
+		return syncCommands.exists(key);
+	}
+	public void zadd(String key, int score, String member){
+		syncCommands.zadd(key, score,member);
+	}
 }

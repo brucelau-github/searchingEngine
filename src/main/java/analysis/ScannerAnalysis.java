@@ -2,9 +2,11 @@ package analysis;
 
 import java.util.Scanner;
 
-public class ScannerAnalysis implements analyzable {
-	private InvertedItem invertedItems = new InvertedItem();
-	private final String wordSplitter = "\\s+";
+public class ScannerAnalysis extends Analyser {
+	public ScannerAnalysis(int docID) {
+		super(docID);
+		// TODO Auto-generated constructor stub
+	}
 	private int currentPostion = 0;
 	@Override
 	public void analyse(String doc) {
@@ -15,9 +17,4 @@ public class ScannerAnalysis implements analyzable {
 		}
 		sc.close();
 	}
-	@Override
-	public void print(){
-		System.out.print(invertedItems);
-	}
-
 }
