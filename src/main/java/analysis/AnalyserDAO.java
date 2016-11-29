@@ -12,7 +12,7 @@ public class AnalyserDAO extends RedisDAO {
 		super();
 	}
 	public String getDocID(){
-		return syncCommands.lpop(DOC_UNANALYZED);
+		return syncCommands.lpop(DOC_UNANALYZED).trim();
 	}
 	public String getDoc(long docID) {
 		return syncCommands.get(PREFIX_DOC+docID);

@@ -1,13 +1,14 @@
 package analysis;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Analyser implements analyzable {
 
-	protected final String wordSplitter = "\\s+";
-	protected Map<String,Item> keywords;
+	protected final String wordSplitter = "[\\s]+";
+	protected Map<String,Item> keywords = new HashMap<>();
 	protected long docID = 0;
-	protected AnalyserDAO dao;
+	protected AnalyserDAO dao = new AnalyserDAO();
 
 	public Analyser(long docID) {
 		this.docID = docID;
@@ -32,7 +33,7 @@ public abstract class Analyser implements analyzable {
 
 	}
 
-	protected void mergeToDataBase() {
+	protected void save() {
 		for(Map.Entry<String, Item> entry : keywords.entrySet()){
 			Item it = entry.getValue();
 			dao.saveItem(docID, it);

@@ -18,3 +18,6 @@ ZADD keyword frequency documentID:postion1:postion2:postion3</br>
 
 for example<br>
 ZADD the 3 98:1:20:31 //this means "the" shows up 3 times in document with id 98 and the index of the positions are 1,20,31
+
+redis windows version download link
+https://github.com/MSOpenTech/redis/blob/win2.8.12/bin/release/redis-2.8.12.zip
