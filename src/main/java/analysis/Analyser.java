@@ -1,21 +1,41 @@
 package analysis;
 
+import java.util.Map;
+
 public abstract class Analyser implements analyzable {
 
-	protected InvertedItem invertedItems;
 	protected final String wordSplitter = "\\s+";
+	protected Map<String,Item> keywords;
+	protected long docID = 0;
+	protected AnalyserDAO dao;
 
-	public Analyser(int docID) {
-		invertedItems = new InvertedItem(docID);
+	public Analyser(long docID) {
+		this.docID = docID;
 	}
 
-	@Override
-	public void print() {
-		System.out.print(invertedItems);
+	protected void addTerm(String term,int position){
+		if(!keywords.containsKey(term)) {
+			keywords.put(term, new Item(term,position));
+		} else {
+			Item termobj = (Item) keywords.get(term);
+			termobj.addFreq();
+			termobj.addPostion(position);
+		}
+	}
+	public String toString(){
+		StringBuffer sb = new StringBuffer();
+		for(Map.Entry<String, Item> entry : keywords.entrySet()){
+			Item it = entry.getValue();
+			sb.append(it.toString()+"\n");
+		}
+		return sb.toString();
+
 	}
 
-	public void save() {
-		invertedItems.mergeToDataBase();
+	protected void mergeToDataBase() {
+		for(Map.Entry<String, Item> entry : keywords.entrySet()){
+			Item it = entry.getValue();
+			dao.saveItem(docID, it);
+		}
 	}
-
 }

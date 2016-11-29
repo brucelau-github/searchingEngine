@@ -1,12 +1,16 @@
 # searchingEngine
+this project is a maven project, download the package and decompress the file.
+open the eclipse. right click the package explore window and select import.</br>
+choose maven existing project. 
+then there you go.
+
+
+
 
 invertedIndex table 
 
 Document in DataBase:<br>
 It should save as sorted set;
-
-
-
 
 term uses sorted set in redis database.
 the format looks like

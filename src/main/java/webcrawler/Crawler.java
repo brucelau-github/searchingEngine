@@ -17,25 +17,33 @@ public class Crawler {
 		Document doc;
 		
 		String httpHeaderUserAgent = "Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox";
+		private DocDAO docDao = new DocDAO();
+		
 		public Crawler(){
 			
 		}
-		
+		public static void main(String[] args){
+			Crawler cr = new Crawler();
+			cr.crawl();
+		}
 		public void crawl(){
 			try {
+				int counter = 0;
 				urlQueue.add(Domain);
 				while(!urlQueue.isEmpty()){
 					String url = urlQueue.remove();
 					doc = Jsoup.connect(url).userAgent(httpHeaderUserAgent).get();
-					visit(url);
+					visit(doc.text());
+					docDao.recordUrl(url);
 					Elements links = doc.select("a[href]");
 					for(Element link : links){
 						String newUrl = link.attr("abs:href");
-						if(!visitedUrl.contains(newUrl)) {
+						if(!visitedUrl(newUrl)) {
 							urlQueue.add(newUrl);
 						}
 					}
-					
+				counter++;
+				if(counter>5) { break;}
 				}
 				
 			} catch (Exception e) {
@@ -44,9 +52,13 @@ public class Crawler {
 			}
 		}
 
-		private void visit(String url) {
-			// TODO Auto-generated method stub
-			
+		private boolean visitedUrl(String newUrl) {
+			return docDao.isVistedUrl(newUrl);
 		}
+
+		private void visit(String text) {
+			docDao.save(text);
+		}
+		
 		
 }

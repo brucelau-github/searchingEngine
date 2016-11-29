@@ -3,7 +3,7 @@ package analysis;
 import java.util.Scanner;
 
 public class ScannerAnalysis extends Analyser {
-	public ScannerAnalysis(int docID) {
+	public ScannerAnalysis(long docID) {
 		super(docID);
 		// TODO Auto-generated constructor stub
 	}
@@ -12,9 +12,14 @@ public class ScannerAnalysis extends Analyser {
 	public void analyse(String doc) {
 		Scanner sc = new Scanner(doc).useDelimiter(wordSplitter);
 		while(sc.hasNext()){
-			invertedItems.addTerm(sc.next(), currentPostion);
+			addTerm(sc.next(), currentPostion);
 			currentPostion++;
 		}
 		sc.close();
+	}
+	@Override
+	public void print() {
+		// TODO Auto-generated method stub
+		
 	}
 }
