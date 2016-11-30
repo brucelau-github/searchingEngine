@@ -9,6 +9,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.Test;
 
+import analysis.PurifyingHTML;
 import webcrawler.PurifyText;
 
 public class HtmlPurify {
@@ -21,8 +22,9 @@ public class HtmlPurify {
 		Document doc;
 		try {
 			doc = Jsoup.parse(input, "UTF-8", "http://www.uwindsor.ca.com/");
-			PurifyText p = new PurifyText();
-			System.out.println(p.purify(doc.html()));
+//			PurifyText p = new PurifyText();
+			PurifyingHTML pu = new PurifyingHTML(doc.html());
+			System.out.println(pu.purify());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

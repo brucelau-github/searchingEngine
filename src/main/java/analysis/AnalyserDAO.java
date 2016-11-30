@@ -1,7 +1,5 @@
 package analysis;
 
-import java.util.List;
-
 import database.RedisDAO;
 
 public class AnalyserDAO extends RedisDAO {
@@ -12,13 +10,17 @@ public class AnalyserDAO extends RedisDAO {
 		super();
 	}
 	public String getDocID(){
-		return syncCommands.lpop(DOC_UNANALYZED).trim();
+		return syncCommands.lpop(DOC_UNANALYZED);
 	}
-	public String getDoc(long docID) {
+	public String getDoc(String docID) {
 		return syncCommands.get(PREFIX_DOC+docID);
 	}
-	public void saveItem(long docID, Item it) {
-		syncCommands.zadd(KEY+it.getKeyWord(), it.getFreq(), String.valueOf(docID) + it.getPos());
+	public void saveItem(String docID, Item it) {
+		syncCommands.zadd(KEY+it.getKeyWord(), it.getFreq(), docID + it.getPos());
+		
+	}
+	public void saveDoc(String docID, String doc) {
+		syncCommands.set(PREFIX_DOC+docID, doc);
 		
 	}
 }

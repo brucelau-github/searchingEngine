@@ -2,16 +2,23 @@ package analysis;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
-public abstract class Analyser implements analyzable {
+public class Analyser {
 
-	protected final String wordSplitter = "[\\s]+";
+	protected final String wordSplitter = "[\\s\'\":,.]+";
 	protected Map<String,Item> keywords = new HashMap<>();
-	protected long docID = 0;
+	protected String docID;
 	protected AnalyserDAO dao = new AnalyserDAO();
+	protected String doc;
 
-	public Analyser(long docID) {
+	public Analyser(String docID) {
 		this.docID = docID;
+	}
+
+	public Analyser(String docID2, String Doc) {
+		this.docID = docID2;
+		this.doc = Doc;
 	}
 
 	protected void addTerm(String term,int position){
@@ -38,5 +45,20 @@ public abstract class Analyser implements analyzable {
 			Item it = entry.getValue();
 			dao.saveItem(docID, it);
 		}
+		
+	}
+	private int currentPostion = 0;
+	public void analyse() {
+		Scanner sc = new Scanner(doc).useDelimiter(wordSplitter);
+		while(sc.hasNext()){
+			addTerm(sc.next(), currentPostion);
+			currentPostion++;
+		}
+		sc.close();
+	}
+
+	public void saveDoc() {
+		dao.saveDoc(docID,doc);
+		
 	}
 }
