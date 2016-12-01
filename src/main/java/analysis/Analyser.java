@@ -49,7 +49,7 @@ public class Analyser {
 	}
 	private int currentPostion = 0;
 	public void analyse() {
-		Scanner sc = new Scanner(doc).useDelimiter(wordSplitter);
+		Scanner sc = new Scanner(doc.toLowerCase()).useDelimiter(wordSplitter);
 		while(sc.hasNext()){
 			addTerm(sc.next(), currentPostion);
 			currentPostion++;

@@ -36,9 +36,9 @@ public class Item {
 	public String getPos() {
 		StringBuffer sb = new StringBuffer();
 		for(int p:pos){
-			sb.append(":"+p);
+			sb.append("-"+p);
 		}
-		return sb.toString();
+		return sb.deleteCharAt(0).toString();
 	}
 	
 }

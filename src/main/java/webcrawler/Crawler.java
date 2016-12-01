@@ -8,7 +8,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
+@Component
 public class Crawler {
 	String Domain = "http://www.uwindsor.ca";
 	int depth = 0;
@@ -28,6 +31,7 @@ public class Crawler {
 		cr.crawl();
 	}
 
+	@Scheduled(fixedRate = 60000)
 	public void crawl() {
 		int counter = 0;
 		urlQueue.add(Domain);
@@ -59,7 +63,7 @@ public class Crawler {
 	private boolean visitedUrl(String newUrl) {
 		return docDao.isVistedUrl(newUrl);
 	}
-
+	
 	private void visit(String text,String url) {
 		docDao.save(text,url);
 	}

@@ -16,7 +16,7 @@ public class AnalyserDAO extends RedisDAO {
 		return syncCommands.get(PREFIX_DOC+docID);
 	}
 	public void saveItem(String docID, Item it) {
-		syncCommands.zadd(KEY+it.getKeyWord(), it.getFreq(), docID + it.getPos());
+		syncCommands.zadd(KEY+it.getKeyWord(), it.getFreq(), docID + ":" + it.getFreq()+ ":" +it.getPos());
 		
 	}
 	public void saveDoc(String docID, String doc) {

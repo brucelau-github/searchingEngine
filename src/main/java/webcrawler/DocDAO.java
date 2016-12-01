@@ -22,7 +22,7 @@ public class DocDAO extends RedisDAO {
 	}
 	public void recordUrl(String url){
 		syncCommands.sadd(VISITED_URL, url);
-		syncCommands.rpush(PREFIX_DOC+docID+DOC_URL, docID);
+		syncCommands.set(PREFIX_DOC+docID+DOC_URL, url);
 		
 	}
 	public boolean isVistedUrl(String url){

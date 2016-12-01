@@ -15,9 +15,9 @@ public class PurifyingHTML implements Purifable {
 	@Override
 	public String purify() {
 		
+		extractInnerText("title");
 		extractAttribute("meta","content");
 		extractAttribute("img","alt");
-		extractInnerText("title");
 		extractInnerText("a");
 		extractInnerText("span");
 		extractInnerText("li");

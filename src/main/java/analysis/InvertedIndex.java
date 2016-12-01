@@ -1,5 +1,9 @@
 package analysis;
 
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+@Component
 //analyse one document, we should have another class to analyse multi class.
 public class InvertedIndex { 
 	private String doc = "";
@@ -36,6 +40,7 @@ public class InvertedIndex {
     	
 
     }
+    @Scheduled(fixedRate = 60000)
 	private void run() {
 		while(retrieveFile()){
 			purifyHtml();
