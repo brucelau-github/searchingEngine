@@ -3,10 +3,19 @@ package query;
 
 public class QueryItem {
 
-    private final String title;
-	private final String summary;
-    private final String url;
-    public QueryItem(String title, String summary, String url) {
+    private String title;
+	private String summary;
+    private String url;
+    public void setTitle(String title) {
+		this.title = title;
+	}
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	public QueryItem(String title, String summary, String url) {
     	super();
     	this.title = title;
     	this.summary = summary;

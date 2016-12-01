@@ -49,7 +49,7 @@ public class Crawler {
 					}
 				}
 				counter++;
-				if (counter > 10) {
+				if (counter > 100) {
 					break;
 				}
 
