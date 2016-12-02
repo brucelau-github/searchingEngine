@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 public class InvertedIndex { 
 	private String doc = "";
 	private AnalyserDAO aDao = new AnalyserDAO();
+	
 	private Analyser analyse;
 	private Purifable p;
 	String docID;

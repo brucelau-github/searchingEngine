@@ -1,6 +1,5 @@
 package webcrawler;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -13,14 +12,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class Crawler {
-	String Domain = "http://www.uwindsor.ca";
-	int depth = 0;
-	private Queue<String> urlQueue = new LinkedList<String>();
-	private ArrayList<String> visitedUrl = new ArrayList<String>();
-	Document doc;
-
-	String httpHeaderUserAgent = "Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox";
-	private DocDAO docDao = new DocDAO();
+	protected Queue<String> urlQueue = new LinkedList<String>();
+	protected boolean stopSwitch = false;
+	protected Document doc;
+	protected String docID = "";
+	protected String url = "http://www.uwindsor.ca";
+	protected String httpHeaderUserAgent = "Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox";
+	protected DocDAO docDao = new DocDAO();
 
 	public Crawler() {
 
@@ -33,23 +31,21 @@ public class Crawler {
 
 	@Scheduled(fixedRate = 60000)
 	public void crawl() {
-		int counter = 0;
-		urlQueue.add(Domain);
+		beforeCrawl();
+		urlQueue.add(url);
 		while (!urlQueue.isEmpty()) {
 			try {
-				String url = urlQueue.remove();
-//				Thread.sleep(2000);
+				url = urlQueue.remove();
 				doc = Jsoup.connect(url).userAgent(httpHeaderUserAgent).get();
-				visit(doc.html(),url);
+				crawlerDo();
 				Elements links = doc.select("a[href]");
 				for (Element link : links) {
 					String newUrl = link.attr("abs:href");
-					if (!visitedUrl(newUrl)) {
+					if (!isCrawlable(newUrl)) {
 						urlQueue.add(newUrl);
 					}
 				}
-				counter++;
-				if (counter > 100) {
+				if (stopSwitch) {
 					break;
 				}
 
@@ -58,14 +54,26 @@ public class Crawler {
 				System.out.println("unvisiable ");
 			}
 		}
+		afterCrawl();
 	}
 
-	private boolean visitedUrl(String newUrl) {
-		return docDao.isVistedUrl(newUrl);
+	protected void beforeCrawl() {
+		
 	}
-	
-	private void visit(String text,String url) {
-		docDao.save(text,url);
+
+	protected void afterCrawl() {
+			
+	}
+
+	protected void crawlerDo() {
+		docID = String.valueOf(docDao.getNewDocID());
+		docDao.saveDoc(doc.html(),docID);
+		docDao.saveUrl(url,docID);
+		
+	}
+
+	protected boolean isCrawlable(String newUrl) {
+		return docDao.isVistedUrl(newUrl);
 	}
 
 }

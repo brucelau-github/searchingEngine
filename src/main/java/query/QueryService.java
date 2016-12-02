@@ -3,8 +3,12 @@ package query;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.crypto.SealedObject;
 
 import org.springframework.stereotype.Service;
 
@@ -16,34 +20,93 @@ public class QueryService {
 	private String[] keywords;
 	private List<QueryItem> items = new ArrayList<QueryItem>();
 	List<String> allKeys = new ArrayList<String>();
-	List<String> paragraphedKeys = new ArrayList<String>();
-	List<String> unrelatedKeys = new ArrayList<String>();
+	InvertedItem[] firstItems;
+	InvertedItem[] secondItems;
+	List<String> firstkey = new ArrayList<String>();
+	private boolean firstKey;
 
 	public List<QueryItem> getQueryReslt(String keyword) {
-		if (!items.isEmpty())
+		firstKey = true;
+		if (!items.isEmpty()) {
 			items.clear();
-		if (keyword.contains(" ")) {
-			keywords = keyword.split(" ");
-			for (String key : keywords) {
-				getInvertedItem(key);
+		}
+		
+		keywords = keyword.split(" ");
+		for (String key : keywords) {
+			getInvertedItem(key);
+		}
+		Arrays.sort(firstItems, new Comparator<InvertedItem>() {
+
+			@Override
+			public int compare(InvertedItem it1, InvertedItem it2) {
+				return (int) (it2.getFreque() - it1.getFreque());
 			}
 
-			HeapSort heap = new HeapSort();
-			String[] arrayKeys = (String[]) allKeys.toArray();
-			heap.heapsort(arrayKeys);
-			fillItems(arrayKeys);
-
-		}
-		if (!keyword.contains(" ")) {
-			fillItems(queryDao.getDocs(keyword), keyword);
-		}
+		});
+		fillItems();
+		highlight();
 		return items;
+	}
+
+	private void fillItems() {
+
+		if (firstItems == null || firstItems.length == 0) {
+			items.clear();
+			return;
+		}
+		for (InvertedItem doc : firstItems) {
+			String docID = String.valueOf(doc.getDocID());
+			String docContent = queryDao.getDocContent(docID);
+			String docUrl = queryDao.getDocURL(docID);
+			items.add(new QueryItem(docContent.substring(0, docContent.indexOf("\n") + 1), docContent, docUrl));
+		}
 	}
 
 	private void getInvertedItem(String keyword) {
 		List<String> keys = queryDao.getDocs(keyword);
-		allKeys.addAll(keys);
+		if (firstKey) {
+			fillClass(keys);
+			firstKey = false;
 
+		} else {
+			compareItem(keys);
+		}
+
+	}
+
+	private void compareItem(List<String> keys) {
+		secondItems = new InvertedItem[keys.size()];
+		for (int i = 0; i < keys.size(); i++) {
+			secondItems[i] = new InvertedItem(keys.get(i));
+		}
+		Sort.heapsort(secondItems);
+
+		int i = 0, j = 0;
+		List<InvertedItem> tmp = new ArrayList<>();
+		while (i < firstItems.length && j < secondItems.length) {
+			if (firstItems[i].compareTo(secondItems[j]) > 0)
+				j++;
+			else if (firstItems[i].compareTo(secondItems[j]) < 0)
+				i++;
+			else {
+				tmp.add(new InvertedItem(firstItems[i].getDocID(),
+						firstItems[i].getFreque() + secondItems[j].getFreque(), firstItems[i].getPosition()));
+				j++;
+				i++;
+			}
+		}
+		firstItems = new InvertedItem[tmp.size()];
+		for (int t = 0; t < tmp.size(); t++) {
+			firstItems[t] = tmp.get(t);
+		}
+	}
+
+	private void fillClass(List<String> keys) {
+		firstItems = new InvertedItem[keys.size()];
+		for (int i = 0; i < keys.size(); i++) {
+			firstItems[i] = new InvertedItem(keys.get(i));
+		}
+		Sort.heapsort(firstItems);
 	}
 
 	private void fillItems(List<String> docs, String keyword) {
@@ -92,64 +155,29 @@ public class QueryService {
 
 	private void highlight() {
 		for (QueryItem it : items) {
+			String docContent = it.getSummary();
 			for (String k : keywords) {
-				it.setSummary(it.getSummary().replaceAll("(?i)" + k, "<strong>" + k + "</strong>"));
+				docContent = replaceKeyWord(docContent, k);
 			}
+			it.setSummary(docContent);
 		}
 	}
 
-	class InvertedItem {
-		private long docID;
-		private long freque;
-		private long[] position;
-		public InvertedItem(long docID, long freque, long[] position) {
-			this.docID = docID;
-			this.freque = freque;
-			this.position = position;
+	private String extractSentence(String p, String key) {
+		String s = "...";
+		String pattern = "(\\s\\b\\w*\\b\\s){0,20}(?i)(" + key + ")(\\s\\b\\w*\\b\\s){0,20}";
+		Pattern r = Pattern.compile(pattern);
+		Matcher m = r.matcher(p);
+		while (m.find()) {
+			s = s + m.group(0);
 		}
-		public InvertedItem(String docID, String freque, String position) {
-			this.docID = Long.parseLong(docID);
-			this.freque = Long.parseLong(freque);
-			String[] pos = position.split("-");
-			this.position = new long[pos.length];
-			int i = 0 ;
-			for(String p : pos ){
-				this.position[i++] = Long.parseLong(p);
-			}
-		}
-		public InvertedItem(String key) {
-			String[]  tmp = key.split(":");
-			this_constr(tmp[0],tmp[1],tmp[2]);
-		}
-		private void this_constr(String docID, String freque, String position) {
-			this.docID = Long.parseLong(docID);
-			this.freque = Long.parseLong(freque);
-			String[] pos = position.split("-");
-			this.position = new long[pos.length];
-			int i = 0 ;
-			for(String p : pos ){
-				this.position[i++] = Long.parseLong(p);
-			}
-			
-		}
-		public long getDocID() {
-			return docID;
-		}
-		public void setDocID(long docID) {
-			this.docID = docID;
-		}
-		public long getFreque() {
-			return freque;
-		}
-		public void setFreque(long freque) {
-			this.freque = freque;
-		}
-		public long[] getPosition() {
-			return position;
-		}
-		public void setPosition(long[] position) {
-			this.position = position;
-		}
+		s = s.replaceAll("(?i)\\b" + key + "\\b", "<span class=\"highlight\">" + key + "</span>");
+		return s.concat("...");
+
+	}
+	private String replaceKeyWord(String p, String key) {
+		String s = p.replaceAll("(?i)\\b" + key + "\\b", "<span class=\"highlight\">" + key + "</span>");
+		return s.concat("...");
 
 	}
 }

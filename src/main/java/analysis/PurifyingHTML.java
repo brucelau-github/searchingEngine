@@ -28,7 +28,7 @@ public class PurifyingHTML implements Purifable {
 		extractInnerText("h5");
 		extractInnerText("p");
 		replaceUnicode();
-		return html.toString();
+		return html.toString().trim();
 	}
 
 

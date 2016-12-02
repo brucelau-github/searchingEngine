@@ -49,6 +49,7 @@ public class Analyser {
 	}
 	private int currentPostion = 0;
 	public void analyse() {
+		@SuppressWarnings("resource")
 		Scanner sc = new Scanner(doc.toLowerCase()).useDelimiter(wordSplitter);
 		while(sc.hasNext()){
 			addTerm(sc.next(), currentPostion);

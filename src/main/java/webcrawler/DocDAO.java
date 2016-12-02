@@ -1,7 +1,6 @@
 package webcrawler;
 
 import database.RedisDAO;
-import com.lambdaworks.redis.api.sync.RedisCommands;
 
 public class DocDAO extends RedisDAO {
 	private final String PREFIX_DOC = "DOC:";
@@ -9,37 +8,54 @@ public class DocDAO extends RedisDAO {
 	private final String DOC_UNANALYZED = "DOC_UNANALYZED";
 	private final String VISITED_URL = "VISITED_URL";
 	private final String DOC_URL = ":URL";
+	private final String DOMAIN_TO_VISIT = "DOMAIN_TO_VISIT";
+	private final String DOMAIN_VISITED = "DOMAIN_VISITED";
 	
 	String docID;
 	
 	public DocDAO() {
+
 	}
 
-	public void save(String text) {
-		docID = String.valueOf(getNewDocID());
-		syncCommands.set(PREFIX_DOC + docID, text);
-		syncCommands.rpush(DOC_UNANALYZED, docID);
-	}
-	public void recordUrl(String url){
-		syncCommands.sadd(VISITED_URL, url);
-		syncCommands.set(PREFIX_DOC+docID+DOC_URL, url);
-		
-	}
 	public boolean isVistedUrl(String url){
 		return syncCommands.sismember(VISITED_URL, url);
 		
 	}
-	private long getNewDocID() {
-		if(!syncCommands.exists(DOC_KEY)) {
+	public long getNewDocID() {
+		if(syncCommands.keys(DOC_KEY).isEmpty()) {
 			syncCommands.set(DOC_KEY, "0");
+			return 0;
 		}
 		return syncCommands.incr(DOC_KEY);
 	}
 
-	public void save(String text, String url) {
-		save(text);
-		recordUrl(url);
+	public void saveDoc(String text,String docID) {
+		syncCommands.set(PREFIX_DOC + docID, text);
+		syncCommands.rpush(DOC_UNANALYZED, docID);
 		
+	}
+
+	public void saveUrl(String url,String docID) {
+		syncCommands.sadd(VISITED_URL, url);
+		syncCommands.set(PREFIX_DOC+docID+DOC_URL, url);
+	}
+
+	public boolean isVisitedDomain(String newHostName) {
+		if (syncCommands.keys(DOMAIN_VISITED).isEmpty()) return false;
+		return syncCommands.sismember(DOMAIN_VISITED, newHostName);
+	}
+
+	public void saveNewDomain(String newHostName) {
+		syncCommands.sadd(DOMAIN_TO_VISIT, newHostName);
+		
+	}
+
+	public void saveVisitedDomain(String currentDomain) {
+		syncCommands.sadd(DOMAIN_VISITED, currentDomain);
+	}
+
+	public boolean isAddedDomain(String newHostName) {
+		return syncCommands.sismember(DOMAIN_TO_VISIT, newHostName);
 	}
 	
 }

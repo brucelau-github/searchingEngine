@@ -1,12 +1,10 @@
 package query;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -18,7 +16,7 @@ public class QueryController {
    
 	@RequestMapping("/query")
     public String greeting(@RequestParam(value="keyword", required=false, defaultValue="the") String keyword, Model model) {
-		List<QueryItem> itemsList = queryService.getQueryReslt(keyword.toLowerCase());
+		List<QueryItem> itemsList = queryService.getQueryReslt(keyword.trim().toLowerCase());
 		if(itemsList.isEmpty()) model.addAttribute("NoItems","No result found!");
 		else model.addAttribute("itemsList",itemsList);
         return "query";
