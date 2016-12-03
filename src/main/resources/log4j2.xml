@@ -1,26 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
-
-    <Appenders>
-        <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%-5p] [%t] %m (%c{1}:%L)%n"/>
-            <ThresholdFilter level="FATAL"/>
-        </Console>
-
-        <File name="File" fileName="target/lettuce.log" bufferedIO="true">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%-5p] [%t] %m (%c{1}:%L)%n"/>
-        </File>
-    </Appenders>
-
-    <Loggers>
-        <Logger name="io.netty" level="INFO"/>
-        <Logger name="com.lambdaworks.redis" level="INFO"/>
-        <Logger name="com.lambdaworks.redis.cluster" level="INFO"/>
-        <Logger name="com.lambdaworks.redis.protocol" level="INFO"/>
-        <Logger name="io.netty" level="INFO"/>
-        <Root level="OFF">
-            <AppenderRef ref="Console"/>
-            <AppenderRef ref="File"/>
-        </Root>
-    </Loggers>
-
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+		</Console>
+	</Appenders>
+	<Loggers>
+		<Root level="off">
+			<AppenderRef ref="Console" />
+		</Root>
+	</Loggers>
 </Configuration>

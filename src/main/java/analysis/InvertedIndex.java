@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 //analyse one document, we should have another class to analyse multi class.
 public class InvertedIndex { 
+	private final int REPEATEDTIME = 100;
 	private String doc = "";
 	private AnalyserDAO aDao = new AnalyserDAO();
 	
@@ -41,12 +42,18 @@ public class InvertedIndex {
     	
 
     }
-    @Scheduled(fixedRate = 60000)
-	private void run() {
+    @Scheduled(fixedRate = 5000)
+	public void run() {
+    	int  i = 0;
 		while(retrieveFile()){
 			purifyHtml();
 			analyseAndSave();
+			if(i++ > REPEATEDTIME) {
+				break;
+			}
+
 		}
+		aDao.disconnect();
 	}
 }
 

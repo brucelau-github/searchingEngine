@@ -6,12 +6,12 @@ import java.util.Map;
 public class InvertedItem {
 	private Map<String,Item> keywords;
 	private long docId = 0;
-	private InvertedItemDAO dao;
+	private AnalyserDAO dao;
 	
 	public InvertedItem(long docId) {
 		keywords = new HashMap<>();
 		this.docId = docId;
-		dao = new InvertedItemDAO();
+		dao = new AnalyserDAO();
 	}
 	
 	public void addTerm(String term,int position){

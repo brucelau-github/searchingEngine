@@ -1,6 +1,8 @@
 package webcrawler;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 import org.jsoup.Jsoup;
@@ -10,8 +12,9 @@ import org.jsoup.select.Elements;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+
 @Component
-public class Crawler {
+public abstract class Crawler {
 	protected Queue<String> urlQueue = new LinkedList<String>();
 	protected boolean stopSwitch = false;
 	protected Document doc;
@@ -19,34 +22,29 @@ public class Crawler {
 	protected String url = "http://www.uwindsor.ca";
 	protected String httpHeaderUserAgent = "Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox";
 	protected DocDAO docDao = new DocDAO();
+	protected List<String> urlHistory = new ArrayList<String>();
 
 	public Crawler() {
 
 	}
 
-	public static void main(String[] args) {
-		Crawler cr = new Crawler();
-		cr.crawl();
-	}
-
-	@Scheduled(fixedRate = 60000)
+	@Scheduled(fixedRate = 3600000)
 	public void crawl() {
 		beforeCrawl();
 		urlQueue.add(url);
-		while (!urlQueue.isEmpty()) {
+		while (!urlQueue.isEmpty() && !stopSwitch) {
 			try {
 				url = urlQueue.remove();
 				doc = Jsoup.connect(url).userAgent(httpHeaderUserAgent).get();
 				crawlerDo();
 				Elements links = doc.select("a[href]");
 				for (Element link : links) {
-					String newUrl = link.attr("abs:href");
-					if (!isCrawlable(newUrl)) {
-						urlQueue.add(newUrl);
+					String newUrl = clearnURL(link.attr("abs:href"));
+					if (isCrawlable(newUrl)) {
+						if (!urlHistory.contains(newUrl))
+							urlQueue.add(newUrl);
+							urlHistory.add(newUrl);
 					}
-				}
-				if (stopSwitch) {
-					break;
 				}
 
 			} catch (Exception e) {
@@ -57,23 +55,16 @@ public class Crawler {
 		afterCrawl();
 	}
 
-	protected void beforeCrawl() {
-		
+	protected String clearnURL(String url) {
+		return url.trim().replaceAll("#[\\w-]*$", "").replaceAll("/$", "");
 	}
 
-	protected void afterCrawl() {
-			
-	}
+	protected abstract void beforeCrawl();
 
-	protected void crawlerDo() {
-		docID = String.valueOf(docDao.getNewDocID());
-		docDao.saveDoc(doc.html(),docID);
-		docDao.saveUrl(url,docID);
-		
-	}
+	protected abstract void afterCrawl();
 
-	protected boolean isCrawlable(String newUrl) {
-		return docDao.isVistedUrl(newUrl);
-	}
+	protected abstract void crawlerDo() ;
+
+	protected abstract boolean isCrawlable(String newUrl);
 
 }

@@ -36,8 +36,9 @@ public class DocDAO extends RedisDAO {
 	}
 
 	public void saveUrl(String url,String docID) {
-		syncCommands.sadd(VISITED_URL, url);
 		syncCommands.set(PREFIX_DOC+docID+DOC_URL, url);
+		syncCommands.sadd(VISITED_URL, url);
+		
 	}
 
 	public boolean isVisitedDomain(String newHostName) {
@@ -56,6 +57,23 @@ public class DocDAO extends RedisDAO {
 
 	public boolean isAddedDomain(String newHostName) {
 		return syncCommands.sismember(DOMAIN_TO_VISIT, newHostName);
+	}
+
+	public void linkAllUrlWithDomain(String currentDomain) {
+		syncCommands.rename(VISITED_URL, VISITED_URL+":"+currentDomain);
+	}
+
+	public String getNextDomain() {
+		return syncCommands.spop(DOMAIN_TO_VISIT);
+	}
+
+	public boolean isExistVisitedURL() {
+		return !(syncCommands.keys(VISITED_URL)).isEmpty();
+	}
+
+	public void reomveVisitedDomain(String currentDomain) {
+		syncCommands.srem(DOMAIN_VISITED, currentDomain);
+		
 	}
 	
 }
