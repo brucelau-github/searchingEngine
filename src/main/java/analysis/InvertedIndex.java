@@ -3,10 +3,13 @@ package analysis;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import util.AppConfig;
+
 @Component
 //analyse one document, we should have another class to analyse multi class.
 public class InvertedIndex { 
-	private final int REPEATEDTIME = 100;
+	final AppConfig appConfig = AppConfig.newInstance();
+	private final int REPEATEDTIME = Integer.parseInt(appConfig.getProperty("ANALYSIS_AMOUNT_PER_TIME"));
 	private String doc = "";
 	private AnalyserDAO aDao = new AnalyserDAO();
 	

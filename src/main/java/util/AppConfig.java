@@ -13,6 +13,7 @@ public class AppConfig extends Properties {
 		try {
 			if(appConfig == null) {
 			appConfig = new AppConfig();
+			System.getProperty("user.dir");
 			FileInputStream in = new FileInputStream("app.conf");
 			appConfig.load(in);
 			in.close();
