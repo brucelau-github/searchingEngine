@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class Analyser {
 
-	protected final String wordSplitter = "[\\s\'\":,.]+";
+	protected final String wordSplitter = "[^a-zA-Z]+";
 	protected Map<String,Item> keywords = new HashMap<>();
 	protected String docID;
 	protected AnalyserDAO dao = new AnalyserDAO();
@@ -61,5 +61,8 @@ public class Analyser {
 	public void saveDoc() {
 		dao.saveDoc(docID,doc);
 		
+	}
+	public void close(){
+		dao.disconnect();
 	}
 }

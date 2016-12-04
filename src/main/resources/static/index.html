@@ -17,19 +17,27 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <!-- Jquery and Jquery UI -->
+    <script src='/webjars/jquery/1.11.1/jquery.min.js'></script>
+    <script src='/webjars/jquery-ui/1.12.1/jquery-ui.js'></script>
+		<link rel="stylesheet" href="/webjars/jquery-ui/1.12.1/jquery-ui.css">
+		<!-- application js -->
+		<script src='/js/main.js'></script>
+
+
 </head>
 <body>
 <div class="container">
     <p>Get your greeting <a href="/greeting">here</a></p>
 	<div class="row">
         <div class="col-sm-6 col-sm-offset-3">
-            <div id="imaginary_container"> 
-                <div class="input-group stylish-input-group">
-                    <input type="text" class="form-control"  placeholder="Search" >
+            <div id="imaginary_container">
+                <div class="input-group stylish-input-group ui-widget">
+                    <input id="user_input" type="text" class="form-control"  placeholder="Search" >
                     <span class="input-group-addon">
                         <button type="submit">
                             <span class="glyphicon glyphicon-search"></span>
-                        </button>  
+                        </button>
                     </span>
                 </div>
             </div>

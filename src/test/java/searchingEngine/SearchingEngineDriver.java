@@ -28,7 +28,21 @@ public class SearchingEngineDriver {
 		while (m.find()) {
 			System.out.println(m.group(0));
 		}
-		DomainCrawler dc = new DomainCrawler("www.uwindsor.ca");
+		String[] tm= {"ccc","a","bb"};
+		for(String s:tm){
+			s="d";
+		}
+		System.out.println(tm[1]);
+		Arrays.sort(tm,new Comparator<String>() {
+
+			@Override
+			public int compare(String it1, String it2) {
+				return (it1.length()-it2.length());
+			}
+
+		});
+		
+//		DomainCrawler dc = new DomainCrawler("www.uwindsor.ca");
 		assertTrue("my Class".toLowerCase().indexOf("class") != -1);
 		// assertTrue("my class".matches("\\w*Class\\w*"));
 	}

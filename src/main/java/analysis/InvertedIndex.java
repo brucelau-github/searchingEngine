@@ -54,9 +54,7 @@ public class InvertedIndex {
 			if(i++ > REPEATEDTIME) {
 				break;
 			}
-
 		}
-		aDao.disconnect();
 	}
 }
 
