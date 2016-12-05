@@ -27,7 +27,7 @@ public class DomainCrawler extends Crawler {
 	Pattern r = Pattern.compile(pattern);
 	Matcher m;
 	int DOMAIN_DEPTH = Integer.parseInt(appConfig.getProperty("DOMAIN_DEPTH"));
-	int pageCounter = 0;
+	int pageDepth = 0;
 
 	public DomainCrawler() {
 
@@ -67,6 +67,9 @@ public class DomainCrawler extends Crawler {
 
 	@Override
 	protected void afterCrawl() {
+		pageDepth++;
+		if (pageDepth > DOMAIN_DEPTH)
+			this.stopSwitch = true;
 		if (docDao.isExistVisitedURL())
 			docDao.linkAllUrlWithDomain(currentDomain);
 		else docDao.reomveVisitedDomain(currentDomain);
@@ -92,8 +95,6 @@ public class DomainCrawler extends Crawler {
 		docDao.saveDoc(doc.html(), docID);
 		docDao.saveUrl(url, docID);
 		urlHistory.add(url);
-		pageCounter++;
-		if (pageCounter > DOMAIN_DEPTH)
-			this.stopSwitch = true;
+		
 	}
 }
