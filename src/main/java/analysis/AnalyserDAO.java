@@ -38,7 +38,7 @@ public class AnalyserDAO extends RedisDAO {
 		String[] nodes = dumpTrieNode.split("\\|");
 		for(String n:nodes){
 			String[] nodeDetail=n.split("\\s");
-			if(nodeDetail.length > 3)
+			if(nodeDetail.length == 3)
 			syncCommands.zadd(TRIE_NODE+nodeDetail[0], Integer.parseInt(nodeDetail[1]), docID + ":" + nodeDetail[1]+ ":" +nodeDetail[2]);
 		}	
 	}

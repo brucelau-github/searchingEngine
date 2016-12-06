@@ -25,10 +25,17 @@ public class QueryTrieService {
 	InvertedItem[] secondItems;
 	List<String> firstkey = new ArrayList<String>();
 	private boolean firstKey;
-	private TrieDictionary dictionary = new TrieDictionary(false);
-
+	private static TrieDictionary dictionary;
+	public QueryTrieService(){
+		if(dictionary ==null){
+			dictionary = new TrieDictionary(false);
+			dictionary.load(queryDao.getTrie());
+		}
+		
+	}
+	
 	public List<QueryItem> getQueryReslt(String keyword) {
-		dictionary.load(queryDao.getTrie());
+		
 		firstKey = true;
 		if (!items.isEmpty()) {
 			items.clear();

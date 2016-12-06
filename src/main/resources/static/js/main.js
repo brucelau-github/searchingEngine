@@ -7,7 +7,7 @@ $(function() {
 		delay : 500,
 		minLength : 3,
 		source : function(request, response) {
-			$.getJSON("http://localhost:8080/querykeys", {
+			$.getJSON("/querytriekeys", {
 				// do not copy the api key; get your own at
 				// developer.rottentomatoes.com
 				term : request.term,
@@ -29,10 +29,22 @@ $(function() {
 			// window.open(ui.item.url);
 		}
 	});
-	$('#user_input').keypress(function (e) {
-		  if (e.which == 13) {
-			  window.location = "/query?keyword=" + $('#user_input').val();
-			 e.preventDefault();
-		  }
-		});
+	$('#user_input').keypress(function(e) {
+		if (e.which == 13) {
+			sendRequest();
+			e.preventDefault();
+		}
+	});
+	
+	$('#searchButton').on("click", function() {
+		sendRequest();
+	});
+	
+	function sendRequest() {
+		if ($('#user_input').val() != "") {
+			window.location = "/querytrie?keyword="
+					+ $('#user_input').val();
+		}
+
+	}
 });
