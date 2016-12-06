@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-public class QueryController {
+public class QueryTrieController {
 	
 	@Autowired
-	private QueryService queryService;
+	private QueryTrieService queryTrieService;
    
-	@RequestMapping("/query")
-    public String query(@RequestParam(value="keyword", required=false, defaultValue="the") String keyword, Model model) {
-		List<QueryItem> itemsList = queryService.getQueryReslt(keyword.trim().toLowerCase());
+	@RequestMapping("/querytrie")
+    public String querytrie(@RequestParam(value="keyword", required=false, defaultValue="the") String keyword, Model model) {
+		List<QueryItem> itemsList = queryTrieService.getQueryReslt(keyword.trim().toLowerCase());
 		if(itemsList.isEmpty()) model.addAttribute("NoItems","No result found!");
 		else model.addAttribute("itemsList",itemsList);
         return "query";

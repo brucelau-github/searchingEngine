@@ -1,6 +1,6 @@
 package util.trie;
 
-class Distance {
+public class Distance {
 	
 	/**
 	 * Compute The Levenshtein distance between two strings.

@@ -67,9 +67,7 @@ public class DomainCrawler extends Crawler {
 
 	@Override
 	protected void afterCrawl() {
-		pageDepth++;
-		if (pageDepth > DOMAIN_DEPTH)
-			this.stopSwitch = true;
+		
 		if (docDao.isExistVisitedURL())
 			docDao.linkAllUrlWithDomain(currentDomain);
 		else docDao.reomveVisitedDomain(currentDomain);
@@ -91,6 +89,9 @@ public class DomainCrawler extends Crawler {
 
 	@Override
 	protected void crawlerDo() {
+		pageDepth++;
+		if (pageDepth > DOMAIN_DEPTH)
+			this.stopSwitch = true;
 		docID = String.valueOf(docDao.getNewDocID());
 		docDao.saveDoc(doc.html(), docID);
 		docDao.saveUrl(url, docID);

@@ -15,9 +15,9 @@ public class QueryDAO extends RedisDAO {
     private final int AUTOCOMPLETE_AMOUNT = Integer.parseInt(appConfig.getProperty("AUTOCOMPLETE_AMOUNT"));
 	private final String PREFIX_DOC = "DOC:";
 	private final String KEY = "KEY:";
-	private final String DOC_UNANALYZED = "DOC_UNANALYZED";
-	private final String VISITED_URL = "VISITED_URL";
 	private final String DOC_URL = ":URL";
+	private final String TRIE_STRUCTURE = "TRIE_STRUCTURE";
+	private final String TRIE_NODE = "TRIE_NODE:";
 	
 	String docID;
 	
@@ -50,5 +50,16 @@ public class QueryDAO extends RedisDAO {
 			keys.addAll(scanCouror.getKeys());
 		}
 		return keys;
+	}
+	public String getTrie() {
+		return syncCommands.get(TRIE_STRUCTURE);
+	}
+
+
+	public List<String> getDocsWithTrieID(long trieNodeID) {
+		return syncCommands.zrevrange(TRIE_NODE+trieNodeID, 0, -1);
+	}
+	public boolean hasTrie() {
+		return syncCommands.get(TRIE_STRUCTURE) == null ? false:true;
 	}
 }

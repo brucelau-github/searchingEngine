@@ -15,10 +15,18 @@ import java.util.concurrent.atomic.AtomicLong;
 public class TrieNode {
 	public static final AtomicLong counter = new AtomicLong();
 	char c;
-	int occurances;
-	StringBuffer docPositions = new StringBuffer("0");
+	public int occurances;
+	public boolean isWord = false;
+	StringBuffer docPositions = new StringBuffer();
 	long nodeID;
-	Map<Character, TrieNode> children;
+	public Map<Character, TrieNode> children;
+	public TrieNode(char c,long nodeID,boolean isWord) {
+		this.nodeID = nodeID;
+		this.c = c;
+		this.isWord = isWord;
+		occurances = 0;
+		children = null;
+	}
 	public TrieNode(char c,long nodeID) {
 		this.nodeID = nodeID;
 		this.c = c;
@@ -78,7 +86,9 @@ public class TrieNode {
 		// that make up the string
 		if (pos == s.length()-1) {
 			n.occurances++;
-			docPositions.append("-" + docPosition);
+			n.isWord = true;
+			if(n.docPositions.length() == 0) n.docPositions.append(docPosition);
+			else n.docPositions.append("-" + docPosition);
 			return n.occurances;
 		} else
 			return n.insert(s, pos+1,docPosition);
@@ -114,7 +124,7 @@ public class TrieNode {
 		return ret;
 	}
 	
-	TrieNode lookup(String s, int pos) {
+	public TrieNode lookup(String s, int pos) {
 		if (s == null)
 			return null;
 		
@@ -136,7 +146,8 @@ public class TrieNode {
 		}
 	}
 	public void dumpTrieNode(StringBuilder sb,String edgeToken) {
-		sb.append(nodeID+" "+c+" "+occurances+" "+docPositions+edgeToken);
+		if(occurances > 0)
+		sb.append(nodeID+" "+occurances+" "+docPositions+edgeToken);
 		if (children == null)
 			return;
 		for (TrieNode n : children.values()){
@@ -170,7 +181,23 @@ public class TrieNode {
 		
 	}
 	public void clearOccurance() {
-		// TODO Auto-generated method stub
+		occurances = 0;
+		if (children == null)
+			return;
+		for (TrieNode n : children.values()){
+			n.clearOccurance();
+		}
 		
+	}
+	public long getNodeID() {
+		return nodeID;
+	}
+	public void dumpTrieNodeChar(StringBuffer sb, String edgeToken) {
+			sb.append(String.valueOf(nodeID)+" "+ c + ":" + String.valueOf(isWord) +edgeToken);
+			if (children == null)
+				return;
+			for (TrieNode n : children.values()){
+				n.dumpTrieNodeChar(sb,edgeToken);
+			}
 	}
 }

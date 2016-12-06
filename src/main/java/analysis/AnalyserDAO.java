@@ -33,21 +33,34 @@ public class AnalyserDAO extends RedisDAO {
 		syncCommands.set(TRIE_STRUCTURE,dumpTrie);
 	}
 	public void saveTrieNodes(String dumpTrieNode, String docID) {
-		//nodeID+" "+c+" "+occurances+" "+docPositions+"|"
+		//nodeID+" "+occurances+" "+docPositions+"|"
 		Map<String,String> trieNodekeys = new HashMap<String,String>();
 		String[] nodes = dumpTrieNode.split("\\|");
 		for(String n:nodes){
 			String[] nodeDetail=n.split("\\s");
-			trieNodekeys.put(TRIE_NODE_C+nodeDetail[0], nodeDetail[1]);
-			syncCommands.zadd(TRIE_NODE+nodeDetail[0], Integer.parseInt(nodeDetail[2]), docID + ":" + nodeDetail[2]+ ":" +nodeDetail[3]);
-		}
-		syncCommands.mset(trieNodekeys);
-		
+			if(nodeDetail.length > 3)
+			syncCommands.zadd(TRIE_NODE+nodeDetail[0], Integer.parseInt(nodeDetail[1]), docID + ":" + nodeDetail[1]+ ":" +nodeDetail[2]);
+		}	
 	}
 	public String getTrie() {
 		return syncCommands.get(TRIE_STRUCTURE);
 	}
-	public char getTrieChar(int nodeID) {
-		return syncCommands.get(TRIE_NODE_C+nodeID).charAt(0);
+	public String getTrieChar(int nodeID) {
+		return syncCommands.get(TRIE_NODE_C+nodeID);
+	}
+	public boolean hasTrie() {
+		// TODO Auto-generated method stub
+		return syncCommands.get(TRIE_STRUCTURE) == null ? false:true;
+	}
+	public void saveTrieNodeChar(String dumpTrieNodeChar) {
+		//nodeID+" "+c
+				Map<String,String> trieNodekeys = new HashMap<String,String>();
+				String[] nodes = dumpTrieNodeChar.split("\\|");
+				for(String n:nodes){
+					String[] nodeDetail=n.split("\\s");
+					trieNodekeys.put(TRIE_NODE_C+nodeDetail[0], nodeDetail[1]);
+				}
+				syncCommands.mset(trieNodekeys);
+		
 	}
 }

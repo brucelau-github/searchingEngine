@@ -14,7 +14,6 @@ public class TrieAnalyserDriver {
 	private final int REPEATEDTIME = Integer.parseInt(appConfig.getProperty("ANALYSIS_AMOUNT_PER_TIME"));
 	private String doc = "";
 	private final AnalyserDAO aDao = new AnalyserDAO();
-	
 	private TrieDictionary dictionary = new TrieDictionary(false);
 	private Purifable p;
 	String docID;
@@ -30,6 +29,7 @@ public class TrieAnalyserDriver {
 	public void purifyHtml(){
 		p = new PurifyingHTML(doc);
 		doc = p.purify();
+		aDao.saveDoc(docID,doc);
 	}
 	public void analyseAndSave(){
 	    String tokenizer = "[^a-zA-Z]+";
@@ -58,14 +58,14 @@ public class TrieAnalyserDriver {
     @Scheduled(fixedRate = 5000)
 	public void run() {
     	int  i = 0;
+    	if(aDao.hasTrie()) 
     	dictionary.load(aDao.getTrie());
-		while(retrieveFile()){
+		while(i<REPEATEDTIME && retrieveFile()){
 			purifyHtml();
 			analyseAndSave();
-			if(i++ > REPEATEDTIME) {
-				break;
-			}
+			i++;
 		}
+		aDao.saveTrieNodeChar(dictionary.dumpTrieNodeChar());
 		aDao.saveTrie(dictionary.dumpTrie());
 	}
 }
