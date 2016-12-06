@@ -28,7 +28,7 @@ public class TrieBestMatchDriver {
 		String trieStructure = "10|1-2|1-3|2-4|2-5|4-7|5-8|3-10|3-6|6-9|";
 		String[] chars={(char)0+":false","a:false","b:false","d:fales","s:false","e:false","d:true","k:true","e:true","y:true"};
 		td.loadTest(trieStructure, chars);
-		String[] rest = td.multiBestMatch("b", 10);
+		String[] rest = td.multiBestMatch("c", 10);
 	}
 
 }

@@ -24,7 +24,7 @@ $(function() {
 		select : function(event, ui) {
 			// prevent autocomplete from updating the textbox
 			event.preventDefault();
-			$(this).val(ui.item.label);
+			$(this).val(ui.item.label.trim());
 			// navigate to the selected item's url
 			// window.open(ui.item.url);
 		}

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2011-2016 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * @author Jianye Liu brucelau.email@gmail.com
+ */
 package analysis;
 
 import java.util.ArrayList;
@@ -121,8 +137,11 @@ public class TrieDictionary extends TrieImpl {
 		// optimal
 		// match ASAP which can be useful for a necessary early exit
 		// lookup the node.
+		
 		TrieNode curNode = root.lookup(word, 0);
-
+		
+		if(curNode == null) return new String[]{""};
+		
 		PriorityQueue<DYMNode> pq = new PriorityQueue<DYMNode>();
 
 		DYMNode best = new DYMNode(curNode, Distance.LD(word, word), word, false);
@@ -154,7 +173,7 @@ public class TrieDictionary extends TrieImpl {
 			cur = n;
 			if (n.wordExists)
 				// if n is more optimal, set it as best
-				words.add(n.word);
+				words.add(n.word.trim());
 		}
 		return words.toArray(new String[0]);
 	}
